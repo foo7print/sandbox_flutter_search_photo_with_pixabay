@@ -65,30 +65,35 @@ class _PixabayPageState extends State<PixabayPage> {
         itemCount: imageList.length,
         itemBuilder: (context, index) {
           Map<String, dynamic> image = imageList[index];
-          return Stack(
-            fit: StackFit.expand,
-            children: [
-              Image.network(
-                image['previewURL'],
-                fit: BoxFit.cover,
-              ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Container(
-                  color: Colors.white,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.thumb_up_alt_outlined,
-                        size: 14,
-                      ),
-                      Text(image['likes'].toString()),
-                    ],
+          return InkWell(
+            onTap: () {
+              print(image['likes']);
+            },
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.network(
+                  image['previewURL'],
+                  fit: BoxFit.cover,
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Container(
+                    color: Colors.white,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.thumb_up_alt_outlined,
+                          size: 14,
+                        ),
+                        Text(image['likes'].toString()),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         }
       ),

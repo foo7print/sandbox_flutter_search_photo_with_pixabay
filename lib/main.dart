@@ -31,7 +31,7 @@ class PixabayPage extends StatefulWidget {
 }
 
 class _PixabayPageState extends State<PixabayPage> {
-  List imageList = [];
+  List<PixabayImage> pixabayImages = [];
 
   Future<void> fetchImages(String text) async {
     final response = await Dio().get(
@@ -43,7 +43,8 @@ class _PixabayPageState extends State<PixabayPage> {
         'pretty': true,
       }
     );
-    imageList = response.data['hits'];
+    final List hits = response.data['hits'];
+    pixabayImages = hits.map((e) => PixabayImage.fromMap(e)).toList();
     setState(() {});
   }
 
@@ -84,18 +85,18 @@ class _PixabayPageState extends State<PixabayPage> {
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
         ),
-        itemCount: imageList.length,
+        itemCount: pixabayImages.length,
         itemBuilder: (context, index) {
-          Map<String, dynamic> image = imageList[index];
+          final pixabayImage = pixabayImages[index];
           return InkWell(
             onTap: () async {
-              shareImage(image['webformatURL']);
+              shareImage(pixabayImage.webformatURL);
             },
             child: Stack(
               fit: StackFit.expand,
               children: [
                 Image.network(
-                  image['previewURL'],
+                  pixabayImage.previewURL,
                   fit: BoxFit.cover,
                 ),
                 Align(
@@ -109,7 +110,7 @@ class _PixabayPageState extends State<PixabayPage> {
                           Icons.thumb_up_alt_outlined,
                           size: 14,
                         ),
-                        Text(image['likes'].toString()),
+                        Text('${pixabayImage.likes}'),
                       ],
                     ),
                   ),
@@ -119,6 +120,26 @@ class _PixabayPageState extends State<PixabayPage> {
           );
         }
       ),
+    );
+  }
+}
+
+class PixabayImage {
+  final String previewURL;
+  final int likes;
+  final String webformatURL;
+
+  PixabayImage({
+    required this.previewURL,
+    required this.likes,
+    required this.webformatURL
+  });
+
+  factory PixabayImage.fromMap(Map<String, dynamic> map) {
+    return PixabayImage(
+      previewURL: map['previewURL'],
+      likes: map['likes'],
+      webformatURL: map['webformatURL'],
     );
   }
 }

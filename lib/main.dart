@@ -47,6 +47,18 @@ class _PixabayPageState extends State<PixabayPage> {
     setState(() {});
   }
 
+  Future<void> shareImage(String url) async {
+    final dir = await getTemporaryDirectory();
+    final response = await Dio().get(
+      url,
+      options: Options(
+        responseType: ResponseType.bytes,
+      ),
+    );
+    final imageFile = await File('${dir.path}/image.png').writeAsBytes(response.data);
+    await Share.shareXFiles([XFile(imageFile.path)]);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -77,15 +89,7 @@ class _PixabayPageState extends State<PixabayPage> {
           Map<String, dynamic> image = imageList[index];
           return InkWell(
             onTap: () async {
-              final dir = await getTemporaryDirectory();
-              final response = await Dio().get(
-                image['webformatURL'],
-                options: Options(
-                  responseType: ResponseType.bytes,
-                ),
-              );
-              final imageFile = await File('${dir.path}/image.png').writeAsBytes(response.data);
-              await Share.shareXFiles([XFile(imageFile.path)]);
+              shareImage(image['webformatURL']);
             },
             child: Stack(
               fit: StackFit.expand,

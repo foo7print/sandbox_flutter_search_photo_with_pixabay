@@ -34,7 +34,7 @@ class _PixabayPageState extends State<PixabayPage> {
   List imageList = [];
 
   Future<void> fetchImages(String text) async {
-    Response response = await Dio().get(
+    final response = await Dio().get(
       'https://pixabay.com/api/?key=${dotenv.get('PIXABAY_API_KEY')}&q=$text&image_type=photo&pretty=true'
     );
     imageList = response.data['hits'];
@@ -71,14 +71,14 @@ class _PixabayPageState extends State<PixabayPage> {
           Map<String, dynamic> image = imageList[index];
           return InkWell(
             onTap: () async {
-              Directory dir = await getTemporaryDirectory();
-              Response response = await Dio().get(
+              final dir = await getTemporaryDirectory();
+              final response = await Dio().get(
                 image['webformatURL'],
                 options: Options(
                   responseType: ResponseType.bytes,
                 ),
               );
-              File imageFile = await File('${dir.path}/image.png').writeAsBytes(response.data);
+              final imageFile = await File('${dir.path}/image.png').writeAsBytes(response.data);
               await Share.shareXFiles([XFile(imageFile.path)]);
             },
             child: Stack(
